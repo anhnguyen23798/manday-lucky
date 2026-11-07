@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================================
+   Manday Design Tokens (xem .claude/skills/manday-design-system)
+   ============================================================ */
+@theme {
+  --color-ink: #14110f;
+  --color-cream: #fff4de;
+  --color-tie: #2b59ff;
+  --color-beer: #ffc929;
+  --color-bbq: #ff6a1f;
+  --color-mint: #27e3a4;
+  --color-blush: #ff5fa8;
+  --color-coffee: #6b3e22;
+  --color-sky: #7cc8ff;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-be-vietnam), system-ui, sans-serif;
+  --font-display: var(--font-bungee), var(--font-baloo), system-ui, sans-serif;
+  --font-rounded: var(--font-baloo), var(--font-be-vietnam), system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --radius-chunky: 14px;
+  --radius-pill: 999px;
+
+  --shadow-brutal-sm: 3px 3px 0 var(--color-ink);
+  --shadow-brutal: 6px 6px 0 var(--color-ink);
+  --shadow-brutal-lg: 10px 10px 0 var(--color-ink);
+  --shadow-brutal-pressed: 2px 2px 0 var(--color-ink);
+
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spin: cubic-bezier(0.12, 0.8, 0.1, 1);
+  --ease-snappy: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+
+  --animate-wiggle: wiggle 0.6s var(--ease-bounce) infinite alternate;
+  --animate-wiggle-slow: wiggle-slow 3s ease-in-out infinite alternate;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pop-in: pop-in 0.45s var(--ease-bounce) both;
+  --animate-drop-in: drop-in 0.7s var(--ease-bounce) both;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-blink-bulb: blink-bulb var(--bulb-speed, 0.8s) steps(2, jump-none) infinite;
+  --animate-shake: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-breathe: breathe 1.6s ease-in-out infinite;
+  --animate-sunburst: spin 24s linear infinite;
+  --animate-stamp: stamp 0.35s var(--ease-bounce) both;
+
+  @keyframes wiggle {
+    from { transform: rotate(-4deg); }
+    to { transform: rotate(4deg); }
+  }
+  @keyframes wiggle-slow {
+    from { transform: rotate(-1.5deg); }
+    to { transform: rotate(1.5deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-16px) rotate(calc(var(--tilt, 0deg) * -1)); }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0.3) rotate(-12deg); opacity: 0; }
+    100% { transform: scale(1) rotate(var(--tilt, 0deg)); opacity: 1; }
+  }
+  @keyframes drop-in {
+    0% { transform: translateY(-120%) rotate(var(--tilt, 0deg)); opacity: 0; }
+    100% { transform: translateY(0) rotate(var(--tilt, 0deg)); opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes blink-bulb {
+    0% { opacity: 1; }
+    100% { opacity: 0.3; }
+  }
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-2px, 1px, 0); }
+    20%, 80% { transform: translate3d(4px, -2px, 0); }
+    30%, 50%, 70% { transform: translate3d(-8px, 3px, 0); }
+    40%, 60% { transform: translate3d(8px, -3px, 0); }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  @keyframes stamp {
+    0% { transform: scale(2.2) rotate(-14deg); opacity: 0; }
+    100% { transform: scale(1) rotate(-14deg); opacity: 1; }
   }
 }
 
+:root {
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+
+  /* Con trỏ chuột theo design system (SVG 32×32, hotspot ở đầu mũi tên 3,2) */
+  --cursor-default: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M3 2 L3 24.5 L8.6 19.4 L12.6 28.4 L16.9 26.5 L12.9 17.6 L20.4 17.6 Z' transform='translate(2.4 2.4)' fill='%2314110f'/><path d='M3 2 L3 24.5 L8.6 19.4 L12.6 28.4 L16.9 26.5 L12.9 17.6 L20.4 17.6 Z' fill='%23ffffff' stroke='%2314110f' stroke-width='2.2' stroke-linejoin='round'/></svg>") 3 2, default;
+  /* Hover vào hành động: mũi tên vàng bia + ria mép */
+  --cursor-action: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M3 2 L3 24.5 L8.6 19.4 L12.6 28.4 L16.9 26.5 L12.9 17.6 L20.4 17.6 Z' transform='translate(2.4 2.4)' fill='%2314110f'/><path d='M3 2 L3 24.5 L8.6 19.4 L12.6 28.4 L16.9 26.5 L12.9 17.6 L20.4 17.6 Z' fill='%23ffc929' stroke='%2314110f' stroke-width='2.2' stroke-linejoin='round'/><g transform='translate(15.2 16.4) scale(0.25)'><path d='M30 18c-6-8-18-11-26-4 4 0 7 3 10 6 6 6 13 3 16-2 3 5 10 8 16 2 3-3 6-6 10-6-8-7-20-4-26 4z' fill='%2314110f' stroke='%23ffffff' stroke-width='7' stroke-linejoin='round' paint-order='stroke'/></g></svg>") 3 2, pointer;
+}
+
+/* Trong @layer base để các utility (cursor-not-allowed, cursor-wait…) vẫn ghi đè được */
+@layer base {
+  html {
+    cursor: var(--cursor-default);
+  }
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  summary,
+  select,
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="range"],
+  label:has(> input[type="file"]),
+  label:has(> input[type="checkbox"]),
+  label:has(> input[type="radio"]) {
+    cursor: var(--cursor-action);
+  }
+  input:not([type="checkbox"], [type="radio"], [type="file"], [type="range"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+}
+
+/* Dùng class này thay cho `cursor-pointer` của Tailwind (con trỏ bàn tay hệ thống) */
+@utility cursor-action {
+  cursor: var(--cursor-action);
+}
+
+html {
+  background-color: var(--color-cream);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  background-image: radial-gradient(color-mix(in oklab, var(--color-ink) 8%, transparent) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-beer);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 4px solid var(--color-tie);
+  outline-offset: 4px;
+}
+
+/* sọc băng cảnh báo công trường */
+.hazard {
+  background-color: var(--color-beer);
+  background-image: repeating-linear-gradient(-45deg, transparent 0 18px, rgb(20 17 15 / 0.1) 18px 36px);
+}
+
+.sunburst {
+  background: repeating-conic-gradient(var(--color-beer) 0 10deg, var(--color-cream) 10deg 20deg);
+}
+
+/* thanh cuộn gọn cho panel */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
