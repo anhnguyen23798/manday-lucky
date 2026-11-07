@@ -16,7 +16,7 @@ paths:
 - Modal: dùng `<dialog>` native (focus trap), `Esc` để đóng, trả focus về nút QUAY sau khi đóng.
   - **Ngoại lệ có chủ đích**: modal kết quả quay (`ResultModal`, `SlotReveal`) KHÔNG đóng bằng Esc hay click nền. MC bắt buộc chọn "Trao giải" hoặc "Vắng mặt", để không thể lặng lẽ hủy một kết quả rồi quay lại.
 - Focus ring rõ ràng: `outline: 4px solid var(--color-tie)` + `outline-offset: 4px`.
-- Có nút bật/tắt âm thanh (mặc định BẬT, nhớ lựa chọn trong localStorage) và nút fullscreen (`F` hotkey).
+- Có nút bật/tắt âm thanh (mặc định BẬT, lưu cùng dữ liệu app) và nút fullscreen. Phím `M`/`F` đăng ký ở `AppHeader` nên dùng được ở **mọi trang**.
 - Màu không phải là cách duy nhất phân biệt lát vòng quay: mỗi lát có tên/emoji riêng.
 - Touch target ≥ 48×48px trên mobile.
 

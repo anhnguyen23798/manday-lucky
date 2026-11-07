@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Màn hình thấp (laptop 1366×768, 1150×631…): dùng `short:` để thu gọn bố cục theo chiều cao */
+@custom-variant short (@media (max-height: 780px));
+
 /* ============================================================
    Manday Design Tokens (xem .claude/skills/manday-design-system)
    ============================================================ */

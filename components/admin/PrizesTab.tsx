@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, type FormEvent } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Field } from "@/components/ui/Field";
 import { Sticker } from "@/components/ui/Sticker";
 import { useBlobUrl } from "@/lib/hooks";
@@ -65,11 +66,15 @@ export function PrizesTab() {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
       <Card tape="blush" className="h-fit p-5">
         <h2 className="mb-3 font-display text-xl">Thêm phần quà</h2>
-        <form onSubmit={onAdd} className="flex flex-col gap-3">
+        {/* noValidate: dùng thông báo tiếng Việt của app thay cho tooltip mặc định (tiếng Anh) của trình duyệt */}
+        <form onSubmit={onAdd} noValidate className="flex flex-col gap-3">
           <Field
             label="Tên quà"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setError(null);
+            }}
             placeholder={FUN_PRIZES[prizes.length % FUN_PRIZES.length]}
             autoComplete="off"
           />
@@ -77,9 +82,13 @@ export function PrizesTab() {
             label="Số lượng"
             type="number"
             min={1}
+            step={1}
             inputMode="numeric"
             value={qty}
-            onChange={(e) => setQty(e.target.value)}
+            onChange={(e) => {
+              setQty(e.target.value);
+              setError(null);
+            }}
           />
           <div className="flex flex-col gap-1">
             <span className="font-rounded text-base font-extrabold">Ảnh (tùy chọn)</span>
@@ -163,6 +172,7 @@ function PrizeItem({ prize, first, last, index }: { prize: Prize; first: boolean
   const [name, setName] = useState(prize.name);
   const [qty, setQty] = useState(String(prize.quantity));
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const save = () => {
     const r = updatePrize(prize.id, { name, quantity: Number(qty) });
@@ -267,10 +277,24 @@ function PrizeItem({ prize, first, last, index }: { prize: Prize; first: boolean
             <Button size="sm" variant="ghost" onClick={() => setEditing(true)}>
               Sửa
             </Button>
-            <Button size="sm" variant="ghost" disabled={first} onClick={() => movePrize(prize.id, -1)} aria-label="Đưa lên">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={first}
+              onClick={() => movePrize(prize.id, -1)}
+              aria-label={`Đưa lên: ${prize.name}`}
+              title="Đưa lên"
+            >
               ↑
             </Button>
-            <Button size="sm" variant="ghost" disabled={last} onClick={() => movePrize(prize.id, 1)} aria-label="Đưa xuống">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={last}
+              onClick={() => movePrize(prize.id, 1)}
+              aria-label={`Đưa xuống: ${prize.name}`}
+              title="Đưa xuống"
+            >
               ↓
             </Button>
             {prize.imageKey && (
@@ -286,12 +310,37 @@ function PrizeItem({ prize, first, last, index }: { prize: Prize; first: boolean
                 Bỏ ảnh
               </Button>
             )}
-            <Button size="sm" variant="bbq" className="ml-auto" disabled={awarded > 0} onClick={remove}>
+            <Button
+              size="sm"
+              variant="bbq"
+              className="ml-auto"
+              disabled={awarded > 0}
+              onClick={() => setConfirmDelete(true)}
+              aria-label={`Xóa quà ${prize.name}`}
+            >
               Xóa
             </Button>
           </>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmDelete}
+        title="Xóa phần quà này?"
+        emoji="🗑️"
+        confirmLabel="Xóa quà"
+        confirmVariant="bbq"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          remove();
+        }}
+      >
+        <p className="rounded-[10px] border-[3px] border-ink bg-white px-3 py-2 text-lg font-semibold">
+          🎁 {prize.name} <span className="font-normal text-ink/70">x{prize.quantity}</span>
+        </p>
+        <p>Quà và ảnh của quà sẽ bị xóa, không hoàn tác được.</p>
+      </ConfirmDialog>
     </li>
   );
 }

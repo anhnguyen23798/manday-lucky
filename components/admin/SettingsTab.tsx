@@ -44,7 +44,11 @@ export function SettingsTab() {
           value={title}
           maxLength={40}
           onChange={(e) => setTitle(e.target.value)}
-          onBlur={() => updateSettings({ eventTitle: title.trim() || DEFAULT_EVENT_TITLE })}
+          onBlur={() => {
+            const next = title.trim() || DEFAULT_EVENT_TITLE;
+            setTitle(next); // ô nhập hiển thị đúng giá trị đã lưu (kể cả khi bị để trống → mặc định)
+            updateSettings({ eventTitle: next });
+          }}
         />
         <Field
           label="Giờ bắt đầu (đếm ngược ở màn chờ)"

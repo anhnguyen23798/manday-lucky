@@ -156,7 +156,7 @@ export function importEmployees(
       data: withLog(
         next,
         "import",
-        `${mode === "replace" ? "Thay thế" : "Import"} ${added.length} nhân viên, bỏ qua ${skipped} dòng`,
+        `${mode === "replace" ? "Thay thế" : "Import"} ${added.length} anh em, bỏ qua ${skipped} dòng`,
       ),
       added: added.length,
       skipped,
@@ -182,7 +182,8 @@ export function seedDefaults(d: Data, rows: readonly (EmployeeInput & { row: num
 export function addPrize(d: Data, input: { name: string; quantity: number; imageKey: string | null }): Result {
   const name = cleanName(input.name);
   if (!name) return fail("Thiếu tên quà");
-  if (!Number.isInteger(input.quantity) || input.quantity < 1) return fail("Số lượng phải ≥ 1");
+  if (!Number.isInteger(input.quantity)) return fail("Số lượng phải là số nguyên");
+  if (input.quantity < 1) return fail("Số lượng phải ≥ 1");
   const order = d.prizes.reduce((m, p) => Math.max(m, p.order), -1) + 1;
   const p: Prize = { id: uid(), name, quantity: input.quantity, imageKey: input.imageKey, order };
   return ok(withLog({ ...d, prizes: [...d.prizes, p] }, "prize", `Thêm quà "${name}" x${p.quantity}`));
@@ -199,7 +200,8 @@ export function updatePrize(
   next.name = cleanName(next.name);
   if (!next.name) return fail("Thiếu tên quà");
   const awarded = awardedCount(d, id);
-  if (!Number.isInteger(next.quantity) || next.quantity < Math.max(1, awarded))
+  if (!Number.isInteger(next.quantity)) return fail("Số lượng phải là số nguyên");
+  if (next.quantity < Math.max(1, awarded))
     return fail(`Số lượng phải ≥ ${Math.max(1, awarded)} (đã trao ${awarded})`);
   return ok({ ...d, prizes: d.prizes.map((x) => (x.id === id ? next : x)) });
 }
@@ -244,7 +246,7 @@ export function resolveDraw(
   const now = Date.now();
   const wins: Win[] = awardIds.map((employeeId, i) => ({ id: uid(), employeeId, prizeId, at: now + i }));
   next = { ...next, wins: [...next.wins, ...wins], absentIds: [...next.absentIds, ...absentIds] };
-  if (awardIds.length) next = withLog(next, "win", `🏆 ${prize.name}: ${names(d, awardIds)}`, now);
+  if (awardIds.length) next = withLog(next, "win", `Trao "${prize.name}": ${names(d, awardIds)}`, now);
   if (absentIds.length) next = withLog(next, "skip", `Vắng mặt: ${names(d, absentIds)}`, now);
   return ok(next);
 }

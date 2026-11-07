@@ -78,13 +78,21 @@ function PrizeCard({
         disabled && !soldOut ? "cursor-wait" : "",
       ].join(" ")}
     >
-      <span className={`grid size-16 shrink-0 place-items-center overflow-hidden rounded-[10px] border-[3px] border-ink bg-cream ${soldOut ? "grayscale" : ""}`}>
+      <span className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-[10px] border-[3px] border-ink bg-cream">
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element -- blob URL cục bộ
-          <img src={url} alt="" className="size-full object-cover" />
+          <img src={url} alt="" className={`size-full object-cover ${soldOut ? "grayscale" : ""}`} />
         ) : (
-          <span className="text-3xl" aria-hidden>
+          <span className={`text-3xl ${soldOut ? "grayscale" : ""}`} aria-hidden>
             🎁
+          </span>
+        )}
+        {/* dấu HẾT nằm trên ảnh, không che tên quà */}
+        {soldOut && (
+          <span aria-hidden className="absolute inset-0 grid place-items-center bg-white/55">
+            <span className="animate-stamp rounded-md border-[3px] border-bbq bg-white/90 px-1 font-display text-sm leading-tight text-bbq">
+              HẾT
+            </span>
           </span>
         )}
       </span>
@@ -94,14 +102,6 @@ function PrizeCard({
           còn {prize.remaining}/{prize.quantity}
         </Badge>
       </span>
-      {soldOut && (
-        <span
-          aria-hidden
-          className="absolute right-2 top-1/2 -translate-y-1/2 animate-stamp rounded-md border-4 border-bbq px-2 font-display text-xl text-bbq"
-        >
-          HẾT
-        </span>
-      )}
     </button>
   );
 }

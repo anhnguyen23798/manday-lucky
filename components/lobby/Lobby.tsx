@@ -103,7 +103,7 @@ export function Lobby() {
       <main className="relative flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-4 py-10 text-center">
         <FloatingStickers names={floatingNames} />
 
-        <div className="relative flex flex-col items-center gap-4">
+        <div data-sticker-avoid className="relative flex flex-col items-center gap-4">
           <div className="flex items-end gap-3">
             <Sticker emoji="🥸" size={92} tilt={-12} className="animate-wiggle-slow" />
             <Sticker emoji="💪" size={64} tilt={14} className="animate-float" />
@@ -120,7 +120,7 @@ export function Lobby() {
           <p className="max-w-3xl font-rounded text-xl font-extrabold md:text-3xl">{copy.heroSub}</p>
         </div>
 
-        <div className="relative flex flex-col items-center gap-4">
+        <div data-sticker-avoid className="relative flex flex-col items-center gap-4">
           {start ? (
             <>
               <p className="font-display text-2xl md:text-4xl">{started ? copy.lobby.started : copy.lobby.countdownTitle}</p>
@@ -133,7 +133,7 @@ export function Lobby() {
           )}
         </div>
 
-        <div className="relative flex flex-wrap justify-center gap-3">
+        <div data-sticker-avoid className="relative flex flex-wrap justify-center gap-3">
           <Badge tone="sky" className="px-4! py-1! text-xl!">
             🧔 {employees.length} anh em
           </Badge>
@@ -143,6 +143,7 @@ export function Lobby() {
         </div>
 
         <Link
+          data-sticker-avoid
           href="/spin"
           onClick={() => sfx.unlock()}
           className={`relative inline-flex min-h-20 items-center justify-center gap-3 rounded-chunky border-4 border-ink bg-tie px-10 font-display text-2xl uppercase tracking-wide text-white shadow-brutal transition-[transform,box-shadow] duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-x-1 active:translate-y-1 active:shadow-brutal-pressed md:text-4xl ${

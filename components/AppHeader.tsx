@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { toggleFullscreen } from "@/lib/hooks";
+import { toggleFullscreen, useHotkeys } from "@/lib/hooks";
 import { sfx } from "@/lib/sfx";
 import { useApp } from "@/lib/store";
 import { IconButton } from "./ui/Button";
@@ -22,6 +22,15 @@ export function AppHeader({ right }: { right?: ReactNode }) {
   const updateSettings = useApp((s) => s.updateSettings);
   const [logoClicks, setLogoClicks] = useState(0);
   const cool = logoClicks >= 5;
+
+  // Phím tắt dùng chung mọi trang (header có ở cả 3 trang)
+  useHotkeys({
+    m: () => {
+      sfx.unlock();
+      updateSettings({ soundOn: !useApp.getState().settings.soundOn });
+    },
+    f: toggleFullscreen,
+  });
 
   return (
     <header className="relative z-20 flex flex-wrap items-center gap-3 border-b-4 border-ink bg-cream/90 px-4 py-2 md:px-6">

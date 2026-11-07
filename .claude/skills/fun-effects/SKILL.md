@@ -20,8 +20,10 @@ Mục tiêu: mỗi tương tác đều có **phản hồi bất ngờ nhỏ**, v
 | Giải "vui" (phiếu rửa bát, v.v.) | Confetti ít hơn, sticker 😂 rơi, thẻ lắc lư | "wah wah" trombone | xem `manday-copywriter` |
 | Đóng modal | Thẻ bay ra, tên người trúng "bay" vào Bảng Vàng | pop | |
 | Hết người/hết giải | Vòng quay "ngủ" (nghiêng, zzz sticker) | — | |
-| Easter egg | Gõ "manday" trên bàn phím → mưa ria mép 🥸 | | vui thôi |
-| Click logo 5 lần | Logo đeo kính đen 🕶️ | | |
+| Easter egg | Trên `/spin` gõ "1111" (11/11) → mưa ria mép 🥸 (`mustacheRain`) | fanfare | |
+| Click logo 5 lần | Logo 🥸 đổi thành 😎 | pop | |
+
+> ⚠️ Chuỗi easter egg **không được chứa phím tắt** (`M`, `F`, Space, Enter…). Chuỗi cũ "manday" đã bị bỏ vì chữ `m` làm đảo âm thanh. Muốn thêm easter egg mới thì chỉ dùng chữ số hoặc ký tự không phải phím tắt, và cập nhật `docs/ui-test-spec.md`.
 
 ## Confetti (`components/effects/Confetti.ts`)
 
@@ -100,5 +102,5 @@ Nếu sau này muốn âm thanh thật (mp3), đặt ở `public/sfx/` và giữ
 - [ ] Có ít nhất 1 phần tử chuyển động nhẹ khi idle (không màn hình nào "chết")
 - [ ] Mọi nút có trạng thái hover + press có cảm giác vật lý
 - [ ] Khoảnh khắc trúng giải kéo dài ≥ 2s hiệu ứng trước khi có thể đóng
-- [ ] Có ít nhất 1 easter egg
+- [ ] Easter egg (nếu có) không dùng chuỗi chứa phím tắt
 - [ ] Reduced-motion vẫn dùng được và vẫn vui (bằng chữ và màu)

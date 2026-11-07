@@ -35,7 +35,7 @@ export async function celebrate({ reduce = false, big = true }: { reduce?: boole
   );
 }
 
-/** Mưa ria mép (easter egg) */
+/** Mưa ria mép: easter egg khi gõ "1111" ở trang Sân khấu */
 export async function mustacheRain() {
   const confetti = (await import("canvas-confetti")).default;
   const scalar = 3;

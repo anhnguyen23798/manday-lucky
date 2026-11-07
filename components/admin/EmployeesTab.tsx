@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, type FormEvent } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Field } from "@/components/ui/Field";
 import { Sticker } from "@/components/ui/Sticker";
 import { DEFAULT_EMPLOYEES_LABEL, fetchDefaultEmployees } from "@/lib/defaults";
@@ -50,6 +51,12 @@ export function EmployeesTab() {
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
+    // kéo thả có thể bỏ qua thuộc tính accept → kiểm tra đuôi file
+    if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
+      setFileError("Chỉ hỗ trợ file .xlsx, .xls hoặc .csv");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
     setBusy(true);
     setFileError(null);
     try {
@@ -122,19 +129,25 @@ export function EmployeesTab() {
 
         <Card className="p-5" tilt={-0.6}>
           <h2 className="mb-3 font-display text-xl">Thêm bằng tay</h2>
-          <form onSubmit={onAdd} className="flex flex-col gap-3">
+          <form onSubmit={onAdd} noValidate className="flex flex-col gap-3">
             <Field
               ref={nameRef}
               label="Họ và tên"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                setFormError(null);
+              }}
               placeholder="Nguyễn Văn An"
               autoComplete="off"
             />
             <Field
               label="Account"
               value={account}
-              onChange={(e) => setAccount(e.target.value)}
+              onChange={(e) => {
+                setAccount(e.target.value);
+                setFormError(null);
+              }}
               placeholder="AnNV1"
               autoComplete="off"
               error={formError}
@@ -155,7 +168,7 @@ export function EmployeesTab() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Tìm tên hoặc account"
-            aria-label="Tìm nhân viên"
+            aria-label="Tìm anh em"
             className="min-h-11 min-w-0 flex-1 rounded-chunky border-[3px] border-ink bg-white px-3 sm:ml-auto sm:max-w-xs"
           />
         </div>
@@ -223,6 +236,7 @@ function EmployeeRow({
   const [name, setName] = useState(employee.fullName);
   const [acc, setAcc] = useState(employee.account);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const save = () => {
     const r = updateEmployee(employee.id, { fullName: name, account: acc });
@@ -300,13 +314,34 @@ function EmployeeRow({
               variant="bbq"
               disabled={status === "won"}
               title={status === "won" ? "Đã trúng giải, không xóa được" : undefined}
-              onClick={() => removeEmployee(employee.id)}
+              onClick={() => setConfirmDelete(true)}
               aria-label={`Xóa ${display}`}
             >
               Xóa
             </Button>
           </div>
         )}
+        <ConfirmDialog
+          open={confirmDelete}
+          title="Xóa anh em này?"
+          emoji="🗑️"
+          confirmLabel="Xóa"
+          confirmVariant="bbq"
+          onCancel={() => setConfirmDelete(false)}
+          onConfirm={() => {
+            setConfirmDelete(false);
+            const r = removeEmployee(employee.id);
+            if (!r.ok) setError(r.error);
+          }}
+        >
+          <p className="whitespace-normal rounded-[10px] border-[3px] border-ink bg-white px-3 py-2 text-left text-lg font-semibold">
+            {display}
+            <span className="block font-mono text-sm font-normal text-ink/70">{employee.account}</span>
+          </p>
+          <p className="whitespace-normal text-left">
+            Người này sẽ bị xóa khỏi danh sách và vòng quay. Không hoàn tác được (có thể thêm lại bằng tay).
+          </p>
+        </ConfirmDialog>
       </td>
     </tr>
   );

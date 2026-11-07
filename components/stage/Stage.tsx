@@ -14,7 +14,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Sticker } from "@/components/ui/Sticker";
 import { LuckyWheel, type WheelEntry } from "@/components/wheel/LuckyWheel";
 import { copy, pick } from "@/lib/copy";
-import { toggleFullscreen, useDisplayNames, useEligible, useHotkeys } from "@/lib/hooks";
+import { useDisplayNames, useEligible, useHotkeys } from "@/lib/hooks";
 import { pickMany, secureInt, secureRandom } from "@/lib/random";
 import { sfx } from "@/lib/sfx";
 import { describeUndo, getRemaining, sortedPrizes, type UndoPreview } from "@/lib/state";
@@ -36,8 +36,7 @@ export function Stage() {
   const employees = useApp((s) => s.employees);
   const accounts = useMemo(() => new Map(employees.map((e) => [e.id, e.account])), [employees]);
   const canUndo = useApp((s) => s.undoStack.length > 0);
-  const soundOn = useApp((s) => s.settings.soundOn);
-  const { resolveDraw, undo, resetResults, updateSettings } = useApp.getState();
+  const { resolveDraw, undo, resetResults } = useApp.getState();
   const eligible = useEligible();
   const names = useDisplayNames();
   const reduce = useReducedMotion();
@@ -224,19 +223,21 @@ export function Stage() {
         void spin();
       },
       "ctrl+z": askUndo,
-      f: toggleFullscreen,
-      m: () => updateSettings({ soundOn: !soundOn }),
+      // M (âm thanh) và F (toàn màn hình) đăng ký ở AppHeader để dùng được mọi trang
     },
     phase === "idle" && !confirmReset && undoPreview === null,
   );
 
-  // Easter egg: gõ "manday" → mưa ria mép
+  // Easter egg: gõ "1111" (ngày 11/11) → mưa ria mép. Chỉ gồm chữ số nên không đụng phím tắt M/F.
   useEffect(() => {
     let buf = "";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.length !== 1) return;
-      buf = (buf + e.key.toLowerCase()).slice(-6);
-      if (buf === "manday") {
+      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName))) return;
+      buf = (buf + e.key).slice(-4);
+      if (buf === "1111") {
+        buf = "";
         void mustacheRain();
         sfx.fanfare();
       }
@@ -289,7 +290,7 @@ export function Stage() {
         }
       />
 
-      <main className="grid flex-1 gap-5 p-4 xl:grid-cols-[290px_minmax(0,1fr)_360px] xl:gap-6 xl:p-6">
+      <main className="grid flex-1 gap-5 p-4 xl:grid-cols-[290px_minmax(0,1fr)_360px] xl:gap-6 xl:p-6 short:py-3">
         <aside className="order-2 min-w-0 xl:order-none">
           <PrizeRail
             prizes={prizeViews}
@@ -306,21 +307,31 @@ export function Stage() {
           />
         </aside>
 
-        <section className="order-1 flex min-w-0 flex-col items-center gap-4 xl:order-none" aria-label="Vòng quay">
-          <div className="flex min-h-14 flex-wrap items-center justify-center gap-3 text-center">
+        <section className="order-1 flex min-w-0 flex-col items-center gap-4 xl:order-none short:gap-2" aria-label="Vòng quay">
+          <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-3 text-center xl:flex-nowrap">
+            {/* 1 dòng: tên quà dài thì cắt "…" (có tooltip), không đẩy layout xuống */}
             {selected ? (
-              <p className="-rotate-1 rounded-chunky border-4 border-ink bg-white px-4 py-1.5 font-display text-xl shadow-brutal-sm md:text-2xl">
-                Đang quay: <span className="text-tie">{selected.name}</span>
-              </p>
+              <h1
+                title={selected.name}
+                className="flex min-w-0 max-w-full -rotate-1 items-baseline gap-2 rounded-chunky border-4 border-ink bg-white px-4 py-1.5 font-display text-lg shadow-brutal-sm 2xl:text-2xl"
+              >
+                <span className="shrink-0">Đang quay:</span>
+                <span className="min-w-0 truncate text-tie">{selected.name}</span>
+              </h1>
             ) : (
-              <p className="font-display text-xl md:text-3xl">{copy.heroTitle}</p>
+              <h1 className="min-w-0 font-display text-lg text-balance 2xl:text-2xl">{copy.heroTitle}</h1>
             )}
-            <span className="rounded-pill border-[3px] border-ink bg-beer px-3 py-1 font-rounded text-lg font-extrabold">
+            <span className="shrink-0 whitespace-nowrap rounded-pill border-[3px] border-ink bg-beer px-3 py-1 font-rounded text-base font-extrabold 2xl:text-lg">
               {liveEntries.length} anh em trong vòng
             </span>
           </div>
 
-          <div className={`relative mt-4 w-[min(100%,60vh)] min-w-[260px] ${phase === "idle" && !reduce ? "animate-wiggle-slow" : ""}`}>
+          {/* Co theo cả chiều rộng lẫn chiều cao: chừa ~400px cho header, tiêu đề, dòng chữ chạy và nút QUAY */}
+          <div
+            className={`relative mt-4 short:mt-3 w-[min(100%,60vh,calc(100dvh_-_400px))] min-w-[240px] ${
+              phase === "idle" && !reduce ? "animate-wiggle-slow" : ""
+            }`}
+          >
             <LuckyWheel
               entries={entries}
               rotation={rotation}
@@ -347,7 +358,7 @@ export function Stage() {
             )}
           </div>
 
-          <div className="flex min-h-12 w-full max-w-2xl items-center justify-center" aria-hidden>
+          <div className="flex min-h-12 short:min-h-9 w-full max-w-2xl items-center justify-center" aria-hidden>
             {busy ? (
               <p className="flex items-center gap-3 rounded-chunky border-[3px] border-ink bg-ink px-4 py-2 font-display text-xl text-cream md:text-2xl">
                 <span className="text-beer">▶</span>
@@ -405,8 +416,8 @@ export function Stage() {
             size="xl"
             disabled={!canSpin}
             onClick={() => void spin()}
-            aria-label={`Quay ${selected ? `giải ${selected.name}` : ""}`}
-            className={`relative min-w-[min(100%,420px)] ${canSpin ? "animate-breathe" : ""}`}
+            aria-label={selected ? `Quay giải ${selected.name}` : "Quay (chưa chọn quà)"}
+            className={`relative min-w-[min(100%,420px)] short:min-h-16 short:text-2xl ${canSpin ? "animate-breathe" : ""}`}
           >
             <span aria-hidden className="inline-block group-enabled:group-hover:animate-wiggle">
               🎡

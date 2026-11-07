@@ -38,6 +38,7 @@ Phong cách UI: "Sticker Pop × Neo-brutalism": viền đen dày, bóng đổ c�
 9. Kết quả người trúng được **chọn ngẫu nhiên bằng crypto trước**, animation chỉ để trình diễn. Không thể dự đoán người trúng.
 10. Dữ liệu chỉ nằm trong trình duyệt đang dùng: profile khác hoặc máy khác sẽ không thấy.
 11. Con trỏ chuột custom không hiện trong ảnh chụp của trình duyệt headless. Chỉ kiểm tra được bằng `getComputedStyle(el).cursor`.
+12. **Easter egg duy nhất là gõ `1111`** (ngày 11/11) ở trang `/spin` → mưa ria mép 🥸. Chuỗi cũ `manday` **đã bị bỏ có chủ đích** (chữ `m` trùng phím tắt âm thanh): gõ `manday` không tạo hiệu ứng, chữ `m` chỉ đổi âm thanh như phím tắt M. Không báo đây là lỗi hay regression.
 
 ---
 
@@ -125,11 +126,12 @@ STT,Họ và tên,Account
 | ADM-EMP-05 | Thêm tay "  Test   B  " / "TestB" | Thêm được; tên được gọn khoảng trắng thành "Test B" |
 | ADM-EMP-06 | Tìm "nguyen viet" (không dấu) | Lọc ra "Nguyễn Việt Cường" |
 | ADM-EMP-07 | Sửa một người, đổi account trùng người khác → "Lưu" | Báo "Account đã tồn tại", không lưu |
-| ADM-EMP-08 | Xóa 1 người → reload | Còn 1 người ít hơn; **không** tự nạp lại mặc định |
+| ADM-EMP-08 | Bấm "Xóa" 1 người → hộp "Xóa anh em này?" (có tên + account) → "Xóa" → reload | Còn 1 người ít hơn; **không** tự nạp lại mặc định. Bấm "Thôi, giữ nguyên" thì không xóa |
 | ADM-EMP-09 | "↻ Nạp danh sách mặc định" → chọn "Thêm vào" | Phần lớn "⚠️ Account đã có"; đổi sang "Thay thế toàn bộ" thì "50 hợp lệ" |
 | ADM-EMP-10 | Import file không có cột đúng (ví dụ chỉ có cột "Tên") | Báo lỗi 'Không tìm thấy 2 cột "Họ và tên" và "Account" trong file' |
 | ADM-EMP-11 | Khi đã có người trúng: mở hộp import | "Thay thế toàn bộ" bị khóa, có dòng giải thích cần Reset kết quả trước |
 | ADM-EMP-12 | Đo bố cục ở 1366×768 | Thẻ "Danh sách" cao bằng cột trái; bảng cuộn bên trong |
+| ADM-EMP-13 | Chọn/kéo thả file `.txt` vào ô import | Lỗi "Chỉ hỗ trợ file .xlsx, .xls hoặc .csv" |
 
 ### 4.2 Tab "Phần quà"
 
@@ -144,10 +146,11 @@ STT,Họ và tên,Account
 |---|---|---|
 | ADM-PRZ-01 | Thêm "Tai nghe Bluetooth" x1 kèm ảnh | Thẻ quà có ảnh, "x1", "Đã trao 0/1" |
 | ADM-PRZ-02 | Thêm "Bình nước giữ nhiệt" x5, "Phiếu miễn rửa bát" x3 (không ảnh) | Badge "3 loại", "9 phần"; thẻ không ảnh hiện 🎁 |
-| ADM-PRZ-03 | Thêm quà tên trống hoặc số lượng 0 | Lỗi "Thiếu tên quà" / "Số lượng phải ≥ 1" |
+| ADM-PRZ-03 | Thêm quà tên trống; rồi gõ tên; rồi số lượng 0; rồi số lượng 1.5 | Lần lượt: "Thiếu tên quà" → lỗi tự biến mất khi gõ → "Số lượng phải ≥ 1" → "Số lượng phải là số nguyên". **Không** có tooltip tiếng Anh của trình duyệt |
 | ADM-PRZ-04 | Bấm ↑ / ↓ | Đổi thứ tự; nút ↑ khóa ở thẻ đầu, ↓ khóa ở thẻ cuối |
 | ADM-PRZ-05 | Quà đã trao 2: Sửa số lượng thành 1 | Lỗi "Số lượng phải ≥ 2 (đã trao 2)" |
 | ADM-PRZ-06 | Quà đã trao | Nút "Xóa" bị khóa |
+| ADM-PRZ-07 | Quà chưa trao: bấm "Xóa" | Hộp "Xóa phần quà này?" có tên + số lượng. "Thôi, giữ nguyên" thì giữ quà; "Xóa quà" thì xóa |
 
 ### 4.3 Tab "Cài đặt"
 
@@ -242,7 +245,7 @@ Khi bấm quay:
   - Hoàn tác được tối đa 20 bước.
 - **"💥 Reset"** (khóa khi chưa ai trúng): hộp "Chắc chưa anh?" với nút giữ 2 giây.
 - **Phím tắt:** Space/Enter = quay, Ctrl+Z = hoàn tác (có xác nhận), F = toàn màn hình, M = âm thanh.
-- **Easter egg:** gõ chữ `manday` trên bàn phím thì mưa ria mép 🥸.
+- **Easter egg:** trên `/spin`, gõ `1111` (khi không focus ô nhập, không có hộp thoại mở) → mưa ria mép 🥸 kèm tiếng kèn. Chỉ gồm chữ số nên không đụng phím tắt nào.
 
 | ID | Bước | Kết quả mong đợi |
 |---|---|---|
@@ -268,7 +271,7 @@ Khi bấm quay:
 | SPIN-20 | Ngay sau SPIN-19, Hoàn tác | Kết quả trước reset được khôi phục |
 | SPIN-21 | Trao hết mọi quà | Dòng "Hết quà rồi! Nhưng tình anh em thì còn mãi 🍻" |
 | SPIN-22 | Spam Space liên tục khi đang quay | Không quay chồng, không lỗi |
-| SPIN-23 | Gõ `manday` | Mưa sticker 🥸 |
+| SPIN-23 | Trên `/spin`, click vùng trống rồi gõ `1111` | Mưa sticker 🥸 (thêm canvas confetti); trạng thái âm thanh **không** đổi. Gõ `manday` thì **không** có mưa (chuỗi cũ đã bỏ), chỉ chữ `m` đổi âm thanh một lần đúng như phím tắt |
 | SPIN-24 | Reload trang giữa các bước | Dữ liệu (Bảng vàng, Vắng mặt, số quà còn) giữ nguyên |
 
 ---
@@ -282,13 +285,13 @@ Các thành phần trên trang:
 - Phần đếm ngược hoặc dòng "Sẵn sàng khi anh em sẵn sàng".
 - Badge "🧔 N anh em" và "🎁 N phần quà" (tổng số lượng quà).
 - Nút lớn "VÀO QUAY THÔI!" dẫn tới `/spin`.
-- Tối đa 12 sticker tên anh em bay quanh viền màn hình, né dải giữa có tiêu đề; ẩn trên mobile.
+- Tối đa 12 sticker tên anh em bay lơ lửng ở các chỗ trống. App đo vị trí thật của tiêu đề, đồng hồ, badge, nút để **không sticker nào đè nội dung hoặc đè nhau**; màn càng nhỏ càng ít sticker (1920×1080 ≈ 12, 1366×768 ≈ 4); ẩn trên mobile.
 - Nếu admin đã upload nhạc: header có nút "🎵 Bật nhạc" / "Tắt nhạc".
 
 | ID | Bước | Kết quả mong đợi |
 |---|---|---|
 | LOB-01 | Mở `/` (chưa đặt giờ) | Đủ các thành phần trên; "Sẵn sàng khi anh em sẵn sàng"; không còn chữ "19/11" hay "20/11" |
-| LOB-02 | 1920×1080 | Tiêu đề 1 dòng, không bị sticker đè; không có thanh cuộn ngang |
+| LOB-02 | 1920×1080, 1600×900, 1366×768 | Tiêu đề 1 dòng ở 1920; **không** sticker nào giao với tiêu đề/đồng hồ/badge/nút hay với sticker khác (tính cả lúc bay lên xuống ±16px); không có thanh cuộn ngang |
 | LOB-03 | Đặt giờ bắt đầu (ADM-SET-03), mở `/` | "GIỜ G SẮP ĐIỂM!" + các ô giờ/phút/giây đếm lùi mỗi giây |
 | LOB-04 | Chờ đến giờ G (để trang mở) | Đổi thành "GIỜ G ĐÃ ĐIỂM!!!", pháo hoa confetti, nút "VÀO QUAY THÔI!" nhún nhảy |
 | LOB-05 | Mở `/` khi giờ G đã qua từ trước | Hiện "GIỜ G ĐÃ ĐIỂM!!!" nhưng **không** bắn pháo hoa lại |
@@ -309,13 +312,14 @@ Các thành phần trên trang:
 | ID | Bước | Kết quả mong đợi |
 |---|---|---|
 | UX-01 | 375×812 ở cả 3 trang | Không có thanh cuộn ngang; các phần xếp dọc; nút bấm ≥ 40–48px |
-| UX-02 | 1366×768 `/spin` | 3 cột vừa màn hình, vòng quay không bị cắt |
+| UX-02 | 1366×768 và 1280×720 `/spin`, chọn quà có > 1 phần | 3 cột vừa màn hình, vòng quay không bị cắt, **nút QUAY nằm trọn trong màn hình** (không cần cuộn), tiêu đề "Đang quay: …" 1 dòng (tên quà dài thì cắt "…"), dấu "HẾT" nằm trên ảnh quà và không che tên quà |
 | UX-03 | Bật giả lập `prefers-reduced-motion: reduce` rồi quay | Quay ngắn (~1,2s), không rung màn hình, confetti ít, sticker bay ẩn; chức năng vẫn đủ |
 | UX-04 | Chỉ dùng bàn phím (Tab) | Có viền focus xanh dày, rõ ràng; tới được mọi nút |
 | UX-05 | Dùng Tab tới một thẻ quà **chưa chọn** rồi nhấn Enter | Thẻ đó được chọn (nền vàng), focus chuyển sang nút QUAY, **chưa** quay. Nhấn Enter lần nữa thì quay đúng quà vừa chọn |
 | UX-06 | Tab tới nút "Quay nhiều" rồi nhấn Space | Chỉ bật/tắt chế độ, **không** quay |
 | UX-07 | Mọi chữ tiếng Việt | Đúng dấu, đúng font (không có ký tự rơi về font hệ thống) |
 | UX-08 | Console trình duyệt suốt quá trình test | Không có lỗi (error) |
+| UX-09 | Màn thấp 1150×631: quay đơn → modal kết quả | Tên người trúng, thẻ quà và 2 nút "TRAO GIẢI! 🎁" / "VẮNG MẶT, QUAY LẠI" đều nằm trong màn hình; nếu màn còn thấp hơn thì modal cuộn được |
 
 ## 9. Mẫu báo cáo
 
